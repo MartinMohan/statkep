@@ -1,4 +1,4 @@
-#!/home/admin/anaconda3/bin/python3
+#!/usr/bin/env python3
 #   author:martinmhan@yahoo.com date:  17/06/2020
 #   Copyright (C) <2020>  <Martin Mohan>
 #

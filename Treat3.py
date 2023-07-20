@@ -1,4 +1,4 @@
-#!/home/admin/anaconda3/bin/python3
+#!/usr/bin/env python3
 from datetime import datetime
 from tpot import TPOTClassifier
 from sklearn.model_selection import train_test_split
