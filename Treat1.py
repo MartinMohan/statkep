@@ -39,14 +39,23 @@ class Treat1():
         """
         self.TCE=TCE
         self.KOI=KOI
-        self.TK="data/TK.csv"
-        self.TCE1="data/TCE1.csv"
+#        print("_init_ TCE %s"%TCE)
+#        self.TK="data/TK.csv"
+#        self.TCE1="data/TCE1.csv"
+        self.TCE1=self.TCE.replace('TCE','TCE1')
+        self.TK=self.TCE.replace('TCE','TK')
 
     global mycomments
     dropCols=[]
 
     # Global mycomments
     mycomments=f"# Merge KOI.csv and TCE.csv, drop cols, impute missing data\n"
+
+    def get_args(self):
+        #        print("In: TCE=%s KOI=%s"%(self.TCE,self.KOI))
+        #print("Out: TCE1=%s TK=%s"%(self.TCE1,self.TK))
+        rtn="In: "+self.TCE+" "+self.KOI+" Out: "+self.TCE1+" "+self.TK
+        return(rtn)
 
     def eprint(self,*args, **kwargs):
         print(*args, file=sys.stderr, **kwargs)
@@ -276,12 +285,16 @@ if __name__ == '__main__':
 
     argv=parser.parse_args()
     mytreat=Treat1(argv.tcefile,argv.koifile)
+#    print("argv.tcefile %s"%argv.tcefile)
+#    mytreat=Treat1("data_test/TCE.csv","data_test/KOI.csv")
+
 
     # Extract original comments from data/TCE.csv
     comments=mytreat.getComments(mytreat.TCE)
     print("Name,Description,Reason,Treat")
 
     predF=mytreat.TCE1
+    print("predF %s"%mytreat.TCE1)
     df = pd.read_csv(mytreat.TCE,comment= '#')
     df = mytreat.cleanAll(df)
     df.to_csv(predF,index=False)
