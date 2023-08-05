@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-###########!/usr/bin/python3
-############!/home/admin/anaconda3/bin/python3
 #   author:martinmhan@yahoo.com date:  17/06/2020
 #   Copyright (C) <2020>  <Martin Mohan>
 #
@@ -21,6 +19,7 @@ import pandas as pd
 import numpy as np
 import argparse,sys,re
 from sklearn.impute import SimpleImputer
+from argparse import RawTextHelpFormatter
 
 class Treat1():
     """ 
@@ -51,11 +50,14 @@ class Treat1():
     # Global mycomments
     mycomments=f"# Merge KOI.csv and TCE.csv, drop cols, impute missing data\n"
 
-    def get_args(self):
-        #        print("In: TCE=%s KOI=%s"%(self.TCE,self.KOI))
-        #print("Out: TCE1=%s TK=%s"%(self.TCE1,self.TK))
-        rtn="In: "+self.TCE+" "+self.KOI+" Out: "+self.TCE1+" "+self.TK
-        return(rtn)
+#    def get_args(self):
+#        #        print("In: TCE=%s KOI=%s"%(self.TCE,self.KOI))
+#        #print("Out: TCE1=%s TK=%s"%(self.TCE1,self.TK))
+#        rtn="In: "+self.TCE+" "+self.KOI+" Out: "+self.TCE1+" "+self.TK
+#        return(rtn)
+
+    def get_ofiles(self):
+        return(self.TCE1,self.TK)
 
     def eprint(self,*args, **kwargs):
         print(*args, file=sys.stderr, **kwargs)
@@ -70,7 +72,7 @@ class Treat1():
 
     # prepend comments to csv - should be last fn called before closing
     def prependComments(self,filename,comments):
-        print(comments)
+        #        print(comments)
         with open(filename,'r') as contents:
             save = contents.read()
         with open(filename,'w') as contents:
@@ -122,7 +124,7 @@ class Treat1():
         for col in cols:
             err=col+"_err"
             comment=self.getDescription(err)
-            print("%s,modify _err,_err to _sn" %(comment))
+#            print("%s,modify _err,_err to _sn" %(comment))
 
         for col in cols:
             err=col+"_err"
@@ -196,21 +198,21 @@ class Treat1():
         for col in cols_to_drop:
             comment=self.getDescription(col)
     #        if(bool(re.match(r'^av_', col))):
-            if(re.match(r'^av_', col)):
-                print("%s,empty entries,Drop" %(comment))
-            else:
-                print("%s,identical entries,Drop" %(comment))
+#            if(re.match(r'^av_', col)):
+#                print("%s,empty entries,Drop" %(comment))
+#            else:
+#                print("%s,identical entries,Drop" %(comment))
 
         dfpre=df.shape[1]
         df.drop(cols_to_drop, axis=1,inplace=True)
-        print("dropNunique: cols_dropped {cols_to_drop}")
+#        print("dropNunique: cols_dropped {cols_to_drop}")
 
         # Factorize cols
         clist=['tce_steff_prov','tce_slogg_prov','tce_smet_prov','tce_sradius_prov']
         for c in clist:
             if c in df.columns:
                 df[c],uniques=pd.factorize(df[c])
-                print("%s,Factorize,Fact" %self.getDescription(c))
+#                print("%s,Factorize,Fact" %self.getDescription(c))
 
         mycomments=mycomments+f"# dropNunique: out rows {df.shape[0]}, cols {df.shape[1]}\n"
     #    eprint("dropNunique: out rows %d,cols %d" %(df.shape[0],df.shape[1]))
@@ -235,7 +237,7 @@ class Treat1():
             if d in df.columns:
                 df.drop(columns=[d],inplace=True)
                 comment=self.getDescription(d)
-                print("%s,%s,mDrop" %(comment,dcols[d]))
+#                print("%s,%s,mDrop" %(comment,dcols[d]))
 
         # Dict key: Additional info from website
         dcols = {
@@ -245,7 +247,7 @@ class Treat1():
             if d in df.columns:
                 df.drop(columns=[d],inplace=True) # kepoi_name no longer needed
                 comment=self.getDescription(d)
-                print("%s %s,See \\textsuperscript{\\ref{foot:tce_desc}},mDrop" %(comment,dcols[d]))
+#                print("%s %s,See \\textsuperscript{\\ref{foot:tce_desc}},mDrop" %(comment,dcols[d]))
     #    eprint("dropMan: out rows %d,cols %d" %(df.shape[0],df.shape[1]))
         mycomments=mycomments+f"# dropMan: out rows {df.shape[0]}, cols {df.shape[1]}\n"
         return df
@@ -273,28 +275,38 @@ class Treat1():
     #    df.to_csv(ofile,index=False)
         return df
 
+desc="Take 2 NASA input files (In1 and In2) and generate 2 cleaned up data files (Out1 and Out2)"
+in1="In1: data/TCE.csv file downloaded from https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=tce"
+in2="In2: data/KOI.csv https://exoplanetarchive.ipac.caltech.edu/cgi-bin/TblView/nph-tblView?app=ExoTbls&config=koi"
+out1="Out1: data/TCE1.csv. Read data/TCE.csv impute data, drop cols, drop rogue flags 'TCE1.csv'"
+out2="Out2: data/TK.csv. merge data/TCE1.csv with  data/KOI.csv (koi_dispostion,kepoi_name)'"
+
 if __name__ == '__main__':
     """ The _main__ models is used for testing"""
-    parser = argparse.ArgumentParser(description="1. TCE.csv impute data, drop cols, drop rogue flags 'TCE1.csv' then merge data/KOI.csv (koi_dispostion,kepoi_name) -> 'TK.csv' - This is only run once at start ",formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+#    parser = argparse.ArgumentParser(description="TCE.csv impute data, drop cols, drop rogue flags 'TCE1.csv' then merge data/KOI.csv (koi_dispostion,kepoi_name) -> 'TK.csv' - This is only run once at start ",formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    mydesc=desc+"\n"+in1+"\n"+in2+"\n"+out1+"\n"+out2
+    parser = argparse.ArgumentParser(description=mydesc,formatter_class=RawTextHelpFormatter)
 
-    parser.add_argument( "--tcefile", type=str, default="data/TCE.csv",
-            help="tce file contains all the IV's (default: %(default)s)")
-
-    parser.add_argument( "--koifile", type=str, default="data/KOI.csv",
-            help="koi file used to obtain DV (default: %(default)s)")
+# The file names will not change so don't pass them as arguments
+#    parser.add_argument( "--tcefile", type=str, default="data/TCE.csv",
+#            help="tce file contains all the IV's (default: %(default)s)")
+#
+#    parser.add_argument( "--koifile", type=str, default="data/KOI.csv",
+#            help="koi file used to obtain DV (default: %(default)s)")
 
     argv=parser.parse_args()
-    mytreat=Treat1(argv.tcefile,argv.koifile)
+#    mytreat=Treat1(argv.tcefile,argv.koifile)
+    mytreat=Treat1()
 #    print("argv.tcefile %s"%argv.tcefile)
 #    mytreat=Treat1("data_test/TCE.csv","data_test/KOI.csv")
 
 
     # Extract original comments from data/TCE.csv
     comments=mytreat.getComments(mytreat.TCE)
-    print("Name,Description,Reason,Treat")
+#    print("Name,Description,Reason,Treat")
 
     predF=mytreat.TCE1
-    print("predF %s"%mytreat.TCE1)
+#    print("predF %s"%mytreat.TCE1)
     df = pd.read_csv(mytreat.TCE,comment= '#')
     df = mytreat.cleanAll(df)
     df.to_csv(predF,index=False)
@@ -311,3 +323,5 @@ if __name__ == '__main__':
 #    mytreat.eprint(com)
     mycomments=mycomments+com
     mytreat.prependComments(mergeF,mycomments)
+#    f1,f2=mytreat.get_ofiles()
+    print("%s\n%s"%(out1,out2))
