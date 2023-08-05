@@ -39,13 +39,24 @@ class Treat2():
     The TCE file is modified the same way as the TK file
 
     """
-    def __init__(self,ifile):
+#    def __init__(self,ifile):
+    def __init__(self,ifile="data/TK.csv"):
         """
         The input file is saved
 
         """
         self.ifile=ifile
-        self.TCE1=self.ifile.replace("TK","TCE1")
+        self.ofile="temp"
+#        self.TCE1=self.ifile.replace("TK","TCE1")
+#        self.ofile=self.ifile.replace("TK","TCE1")
+
+        # Return names of file output
+#    def set_ofile(self,suffix):
+#        self.ofile=self.ifile.replace(".csv","_vif.csv")   
+#        print(f"{self.ifile} to {self.ofile}")
+
+    def get_ofiles(self):
+        return(self.ofile)
 
     def bin(self): # Merge FP and CANDIDATE - all files contain b at start
         self.TK=self.ifile
@@ -241,6 +252,7 @@ class Treat2():
         print(f"{self.ifile} {df.shape} to {ofile} {dfnew.shape}")
 
     def cap1(self):
+        self.ofile=self.ifile.replace(".csv","_cap1.csv")   
         # Cap columns which are not commented out
         cap_cols=[
                 # 'tce_period',
@@ -367,9 +379,10 @@ class Treat2():
         dfrest=df.drop(cap_cols, axis=1,errors='ignore') # The rest
         dfnew = pd.concat([dfrest.reset_index(drop=True), dfcap], axis=1)
 
-        ofile=self.ifile.replace(".csv", "_cap1.csv")       
-        dfnew.to_csv(ofile,index=False)
-        print(f"{self.ifile} {df.shape} to {ofile} {dfnew.shape}")
+#        ofile=self.ifile.replace(".csv", "_cap1.csv")       
+        dfnew.to_csv(self.ofile,index=False)
+#        print(f"{self.ifile} {df.shape} to {ofile} {dfnew.shape}")
+        return self.ofile
 
     def capOutliers(self,iv):
         ''' Cap all outliers Interquartile range IQR*1.5 '''        
@@ -411,6 +424,7 @@ class Treat2():
         print(f"{self.ifile} to {ofile} with col 'pca' var ={pca.explained_variance_ratio_} {pca.singular_values_}")
 
     def vif(self):
+        self.ofile=self.ifile.replace(".csv","_vif.csv")   
         """ A list of highly correlate IV's (VIF>10) removed iteratively
         usign get_vif. """
 
@@ -423,14 +437,13 @@ class Treat2():
 
         df=pd.read_csv(self.ifile,comment= '#') 
         dfvif=df.drop(cols, axis=1)
-        vifFile=self.ifile.replace(".csv","_vif.csv")   
-        dfvif.to_csv(vifFile,index=False)
-        print(f"{self.ifile} {df.shape} to {vifFile} {dfvif.shape}")
+        dfvif.to_csv(self.ofile,index=False)
+        return self.ofile
 
 if __name__ == '__main__':
     """ The _main__ models is used for testing"""
 
-    parser = argparse.ArgumentParser(description=" Read files data/TK.csv and data/TCE1.csv created by Treat1.py. Create new file depending on options e.g --b bTK.csv - Use Treat2.sh to call this",formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description=" Read files data/TK.csv and data/TCE1.csv created by Treat1.py. Create new file depending on options e.g --b bTK.csv (at least on argument must be supplied) - Use Treat2.sh to call this",formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     parser.add_argument( "--ifile", type=str, default="data/TK.csv",
             help="input file (default: %(default)s)")
@@ -468,14 +481,16 @@ if __name__ == '__main__':
     if(argv.bin): # No effect on TCE1 which does not have koi_disposition
         mytreat.bin()
     elif(argv.cap1): 
-        mytreat.cap1()
+        ofile=mytreat.cap1()
     elif(argv.cap2):
-        mytreat.cap2()
+        ofile=mytreat.cap2()
     elif(argv.pca):
-        mytreat.pca() 
+        ofile=mytreat.pca() 
 #    elif(argv.npca):
 #        mytreat.npca()  # Standardized first
     elif(argv.vif):
-        mytreat.vif()
+        ofile=mytreat.vif()
+#        print("ofile=%s"%ofile)
     else: 
         print("Unknown argument")
+    print(f"{mytreat.ifile} to {ofile}")

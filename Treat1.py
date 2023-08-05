@@ -38,9 +38,6 @@ class Treat1():
         """
         self.TCE=TCE
         self.KOI=KOI
-#        print("_init_ TCE %s"%TCE)
-#        self.TK="data/TK.csv"
-#        self.TCE1="data/TCE1.csv"
         self.TCE1=self.TCE.replace('TCE','TCE1')
         self.TK=self.TCE.replace('TCE','TK')
 
@@ -283,7 +280,6 @@ out2="Out2: data/TK.csv. merge data/TCE1.csv with  data/KOI.csv (koi_dispostion,
 
 if __name__ == '__main__':
     """ The _main__ models is used for testing"""
-#    parser = argparse.ArgumentParser(description="TCE.csv impute data, drop cols, drop rogue flags 'TCE1.csv' then merge data/KOI.csv (koi_dispostion,kepoi_name) -> 'TK.csv' - This is only run once at start ",formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     mydesc=desc+"\n"+in1+"\n"+in2+"\n"+out1+"\n"+out2
     parser = argparse.ArgumentParser(description=mydesc,formatter_class=RawTextHelpFormatter)
 
@@ -295,10 +291,7 @@ if __name__ == '__main__':
 #            help="koi file used to obtain DV (default: %(default)s)")
 
     argv=parser.parse_args()
-#    mytreat=Treat1(argv.tcefile,argv.koifile)
     mytreat=Treat1()
-#    print("argv.tcefile %s"%argv.tcefile)
-#    mytreat=Treat1("data_test/TCE.csv","data_test/KOI.csv")
 
 
     # Extract original comments from data/TCE.csv

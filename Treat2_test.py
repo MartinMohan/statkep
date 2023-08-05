@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
 import unittest
-from Treat1 import Treat1
+import filecmp
+from Treat2 import Treat2
 
-class TestTreat1(unittest.TestCase):
-    def test_get_ofiles(self):
-        In1="data_test/TCE.csv"
-        In2="data_test/KOI.csv"
-        Out1=In1.replace('TCE','TCE1')
-        Out2=In1.replace('TCE','TK')
+class TestTreat2(unittest.TestCase):
 
-        mytreat=Treat1(In1,In2)
-        print("In: %s %s\nOut: %s %s"%(In1,In2,Out1,Out2))
-        self.assertEqual(mytreat.get_ofiles(),(Out1,Out2) )
+    def setUp(self):
+        print("setUp")
+        self.In1="data/TK.csv"
+#        self.Out1="Unknown"
+
+    def test_vif(self):
+        mytreat=Treat2(self.In1)
+        ofile=mytreat.vif()
+        self.Out1=self.In1.replace(".csv","_vif.csv")
+        self.assertEqual(ofile,self.Out1)
+
+    def test_cmp_vif(self):
+        mytreat=Treat2(self.In1)
+        ofile=mytreat.vif()
+        result=filecmp.cmp(ofile,ofile+".T2")
+        self.assertTrue(result)
 
 if __name__ == '__main__':
     unittest.main()
