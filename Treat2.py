@@ -242,14 +242,17 @@ class Treat2():
          'tce_dikco_msky_sn'
          ]
         df = pd.read_csv(self.ifile,comment= '#')
-        X= df[df.columns & cap_cols] # Only copy existing cols
+#        X= df[df.columns & cap_cols] # Only copy existing cols
+        X = df[df.columns.intersection(cap_cols)]  # Only copy existing columns
+
         dfcap=X.apply(self.capOutliers) # Apply to df
         dfrest=df.drop(cap_cols, axis=1,errors='ignore') # The rest
         dfnew = pd.concat([dfrest.reset_index(drop=True), dfcap], axis=1)
 
-        ofile=self.ifile.replace(".csv", "_cap2.csv")       
-        dfnew.to_csv(ofile,index=False)
-        print(f"{self.ifile} {df.shape} to {ofile} {dfnew.shape}")
+        self.ofile=self.ifile.replace(".csv", "_cap2.csv")       
+        dfnew.to_csv(self.ofile,index=False)
+#        print(f"{self.ifile} {df.shape} to {self.ofile} {dfnew.shape}")
+        return self.ofile
 
     def cap1(self):
         self.ofile=self.ifile.replace(".csv","_cap1.csv")   
@@ -374,7 +377,8 @@ class Treat2():
          #'tce_dikco_msky_sn'
          ]
         df = pd.read_csv(self.ifile,comment= '#')
-        X= df[df.columns & cap_cols] # Only copy existing cols
+#        X= df[df.columns & cap_cols] # Only copy existing cols
+        X = df[df.columns.intersection(cap_cols)]  # Changed to this on 08/08
         dfcap=X.apply(self.capOutliers) # Apply to df
         dfrest=df.drop(cap_cols, axis=1,errors='ignore') # The rest
         dfnew = pd.concat([dfrest.reset_index(drop=True), dfcap], axis=1)

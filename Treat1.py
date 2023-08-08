@@ -293,7 +293,6 @@ if __name__ == '__main__':
     argv=parser.parse_args()
     mytreat=Treat1()
 
-
     # Extract original comments from data/TCE.csv
     comments=mytreat.getComments(mytreat.TCE)
 #    print("Name,Description,Reason,Treat")
